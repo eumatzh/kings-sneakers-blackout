@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kings Sneakers Blackout</title>
+<link rel="preload" href="products.json" as="fetch" crossorigin>
+<link rel="preload" href="img/hero.webp" as="image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Blackout: vitrine escura estilo loja esportiva — grade de produtos larga, filtros à esquerda no PC, gaveta no celular */
+:root{
+  --bg:#0a0a0a; --surface:#151515; --line:#2a2a2a; --ink:#f5f5f5; --muted:#9a9a9a; --red:#e8112d;
+  --display:'Montserrat',system-ui,sans-serif; --body:'Archivo','Helvetica Neue',Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.wrap{max-width:1440px;margin:0 auto;padding:0 clamp(16px,3vw,40px)}
+
+.promo{background:var(--red);color:#fff;text-align:center;font:800 13px/1 var(--display);letter-spacing:.06em;padding:10px 16px}
+header{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hd{display:flex;align-items:center;gap:24px;height:64px}
+.logo{font:900 22px/1 var(--display);letter-spacing:-.5px;white-space:nowrap}
+.logo img{height:40px;width:auto}
+@media (max-width:900px){.logo img{height:34px}}
+nav.cats{display:flex;gap:4px;flex:1;justify-content:center;overflow-x:auto;scrollbar-width:none}
+nav.cats::-webkit-scrollbar{display:none}
+.cat{font:700 15px/1 var(--display);padding:10px 12px;border-radius:999px;white-space:nowrap;color:var(--ink)}
+.cat:hover{background:var(--surface)}
+.cat[aria-pressed="true"]{text-decoration:underline;text-decoration-color:var(--red);text-decoration-thickness:3px;text-underline-offset:8px}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:999px;padding:0 14px;height:40px;width:220px}
+@media (max-width:900px){.cartbtn{order:1;margin-left:auto}}
+.search input{background:none;border:0;outline:none;width:100%;font-size:15px}
+.search svg{flex:none;color:var(--muted)}
+@media (max-width:900px){
+  .hd{flex-wrap:wrap;height:auto;padding:12px 0;gap:12px}
+  .search{flex:1;width:auto;order:2}
+  nav.cats{order:3;flex-basis:100%;justify-content:flex-start;margin:0 -4px}
+}
+
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero-in{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:32px;padding-top:40px;padding-bottom:40px}
+.hero h1{font:900 clamp(52px,8vw,124px)/.9 var(--display);letter-spacing:-.03em;text-wrap:balance}
+.hero .tag{display:inline-block;background:var(--red);font:800 clamp(14px,1.6vw,20px)/1.2 var(--display);padding:10px 16px;margin-top:20px}
+.hero p.big{font:900 clamp(28px,3.4vw,48px)/1 var(--display);margin-top:24px}
+.hero p.big b{color:var(--red)}
+.cta{display:inline-flex;align-items:center;gap:10px;margin-top:28px;background:#fff;color:#000;font:800 16px/1 var(--display);padding:16px 26px;border-radius:999px}
+.cta:hover{background:#ddd}
+.hero-img{position:relative;aspect-ratio:4/5;max-height:560px;justify-self:end;width:100%;max-width:460px;border-radius:20px;overflow:hidden;box-shadow:0 0 120px rgba(232,17,45,.3)}
+.hero-img img{width:100%;height:100%;object-fit:cover}
+@media (max-width:760px){
+  .hero-in{grid-template-columns:1fr;padding-top:24px}
+  .hero-img{justify-self:stretch;max-width:none;aspect-ratio:16/11;order:-1}
+}
+
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:28px 0 16px}
+.bar h2{font:800 clamp(20px,2.2vw,28px)/1.1 var(--display)}
+.bar h2 small{font:500 16px var(--body);color:var(--muted);margin-left:6px}
+.bar-r{display:flex;gap:10px;align-items:center}
+.btn-f{display:none;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:10px 16px;font-weight:600}
+select{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:10px 14px}
+.layout{display:grid;grid-template-columns:240px 1fr;gap:32px;padding-bottom:64px}
+aside.filters{position:sticky;top:84px;align-self:start;max-height:calc(100vh - 100px);overflow:auto;padding-right:8px}
+.fgroup{border-bottom:1px solid var(--line);padding:16px 0}
+.fgroup h3{font:700 15px/1 var(--display);margin-bottom:12px}
+.fgroup label{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:15px;cursor:pointer}
+.fgroup input{accent-color:var(--red);width:18px;height:18px}
+.fgroup .n{color:var(--muted);margin-left:auto;font-size:13px}
+.clear{margin-top:16px;color:var(--muted);text-decoration:underline;font-size:14px}
+.drawer-h{display:none}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px 16px}
+@media (min-width:1400px){.grid{grid-template-columns:repeat(4,1fr)}}
+.card{text-align:left;display:flex;flex-direction:column;gap:10px}
+.card .pic{position:relative;aspect-ratio:4/5;background:#ddd;overflow:hidden}
+.card .pic img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.card:hover .pic img{transform:scale(1.04)}
+.badge{position:absolute;top:10px;left:10px;background:var(--red);color:#fff;font:800 13px/1 var(--display);padding:7px 9px}
+.card .br{color:var(--red);font:700 13px/1 var(--display);text-transform:uppercase;letter-spacing:.04em}
+.card .nm{font:600 16px/1.3 var(--body)}
+.card .cat2{color:var(--muted);font-size:14px}
+.price{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.price .por{font:800 18px/1 var(--display)}
+.price .de{color:var(--muted);text-decoration:line-through;font-size:14px}
+.empty{grid-column:1/-1;padding:60px 0;text-align:center;color:var(--muted)}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .btn-f{display:inline-flex}
+  aside.filters{position:fixed;inset:0;z-index:40;background:var(--bg);max-height:none;padding:0 20px 100px;transform:translateX(-100%);transition:transform .25s}
+  aside.filters.open{transform:none}
+  .drawer-h{display:flex;justify-content:space-between;align-items:center;height:64px;position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line)}
+  .drawer-h b{font:800 20px var(--display)}
+  .apply{position:fixed;left:20px;right:20px;bottom:20px;background:#fff;color:#000;border-radius:999px;padding:16px;font:800 16px var(--display)}
+  .grid{grid-template-columns:repeat(2,1fr);gap:22px 10px}
+  .card .nm{font-size:14px}.price .por{font-size:16px}
+}
+@media (min-width:901px){.apply{display:none}}
+
+dialog{border:0;padding:0;background:var(--bg);color:var(--ink);width:min(1100px,100%);max-width:100%;max-height:100%;margin:auto}
+dialog::backdrop{background:rgba(0,0,0,.75)}
+.pd{display:grid;grid-template-columns:1.1fr 1fr;min-height:min(80vh,720px)}
+.pd .pic{background:#ddd;position:relative}
+.pd .pic img{width:100%;height:100%;object-fit:cover}
+.pd .info{padding:40px;display:flex;flex-direction:column;gap:14px}
+.pd .x{position:absolute;top:14px;right:14px;z-index:2;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;display:grid;place-items:center}
+.pd h2{font:900 clamp(26px,3vw,36px)/1.05 var(--display);text-wrap:balance}
+.pd .ref{color:var(--muted);font-size:14px}
+.pd .pr{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:6px}
+.pd .pr .por{color:var(--red);font:900 48px/1 var(--display);letter-spacing:-1px}
+.pd .pr .de{color:var(--muted);text-decoration:line-through;font-size:18px}
+.pd .off{background:#fff;color:var(--red);font:800 15px var(--display);padding:6px 10px}
+.pd p.d{color:#ccc;line-height:1.55;max-width:46ch}
+.buy{margin-top:auto;display:flex;align-items:center;justify-content:center;gap:10px;background:var(--red);color:#fff;border-radius:999px;padding:18px;font:800 17px var(--display);text-decoration:none}
+.buy:hover{filter:brightness(1.1)}
+.note{color:var(--muted);font-size:13px;text-align:center}
+@media (max-width:760px){
+  dialog{width:100%;height:100%}
+  .pd{grid-template-columns:1fr;min-height:100%}
+  .pd .pic{aspect-ratio:4/5}
+  .pd .info{padding:24px 20px 32px}
+}
+.cartbtn{position:relative;width:44px;height:44px;display:grid;place-items:center;border-radius:50%;flex:none}
+.cartbtn:hover{background:var(--surface)}
+.cartbtn .ct{position:absolute;top:2px;right:0;min-width:20px;height:20px;border-radius:10px;background:var(--red);color:#fff;font:800 12px/20px var(--display);text-align:center;padding:0 5px}
+.cartbtn .ct:empty{display:none}
+.sizes{display:flex;gap:8px;flex-wrap:wrap}
+.sizes button{min-width:56px;height:48px;border:1px solid var(--line);border-radius:8px;font:700 15px var(--display)}
+.sizes button:hover{border-color:#777}
+.sizes button[aria-pressed="true"]{border-color:#fff;background:#fff;color:#000}
+.lbl{font:700 14px var(--display);display:flex;justify-content:space-between}
+.lbl .err{color:var(--red)}
+.avail{display:flex;gap:10px;align-items:flex-start;background:#2a2410;border:1px solid #5c4a12;color:#f3d27a;border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.45}
+.avail svg{flex:none;margin-top:1px}
+.avail b{color:#ffe08a}
+.tbc{display:inline-block;background:#2a2410;color:#f3d27a;border-radius:4px;padding:1px 6px;font-size:12px;margin-left:4px}
+.addcart{display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#000;border-radius:999px;padding:18px;font:800 17px var(--display)}
+.addcart:hover{background:#ddd}
+.buy.sec{background:transparent;border:1px solid var(--line);margin-top:0}
+.buy.sec:hover{border-color:#777;filter:none}
+.acts{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+#cart{position:fixed;top:0;right:0;bottom:0;z-index:50;width:min(440px,100%);background:var(--bg);border-left:1px solid var(--line);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s}
+#cart.open{transform:none}
+.shade{position:fixed;inset:0;z-index:45;background:rgba(0,0,0,.6);display:none}
+.shade.on{display:block}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:64px;border-bottom:1px solid var(--line)}
+.ch b{font:800 20px var(--display)}
+.ci-list{flex:1;overflow:auto;padding:8px 20px}
+.ci{display:grid;grid-template-columns:84px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.ci img{width:84px;height:105px;object-fit:cover;background:#ddd}
+.ci .t{font:600 15px/1.3 var(--body)}
+.ci .m{color:var(--muted);font-size:13px;margin-top:4px}
+.ci .row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:999px}
+.qty button{width:40px;height:40px;font-size:18px}
+.qty span{min-width:24px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.ci .pp{font:800 16px var(--display);font-variant-numeric:tabular-nums}
+.ci .rm{color:var(--muted);font-size:13px;text-decoration:underline;margin-top:6px}
+.cf{border-top:1px solid var(--line);padding:16px 20px 20px;display:flex;flex-direction:column;gap:8px;font-variant-numeric:tabular-nums}
+.cf .r{display:flex;justify-content:space-between;color:var(--muted);font-size:15px}
+.cf .r.save{color:#3ddc84}
+.cf .r.tot{color:var(--ink);font:900 22px var(--display);margin-top:4px}
+.cf .buy{margin-top:10px}
+.cempty{padding:60px 20px;text-align:center;color:var(--muted)}
+.toast{position:fixed;left:50%;top:76px;white-space:nowrap;transform:translateX(-50%);z-index:60;background:#fff;color:#000;font:700 15px var(--display);padding:14px 20px;border-radius:999px;display:none}
+.toast.on{display:block}
+.ig{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(45deg,#f58529,#dd2a7b 50%,#8134af);color:#fff;font:800 16px var(--display);padding:14px 22px;border-radius:999px}
+.ig:hover{filter:brightness(1.1)}
+#intro{position:fixed;inset:0;z-index:100;background:#000;transition:opacity .45s}
+#intro.out{opacity:0;pointer-events:none}
+#intro canvas{width:100%;height:100%;display:block}
+#skip{position:absolute;right:20px;bottom:calc(24px + env(safe-area-inset-bottom));color:#aaa;font:700 14px var(--display);border:1px solid #333;border-radius:999px;padding:12px 18px}
+#skip:hover{color:#fff;border-color:#777}
+body.lock{overflow:hidden}
+footer{border-top:1px solid var(--line);padding:32px 0;color:var(--muted);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body class="lock">
+<div id="intro" aria-hidden="true"><canvas id="fx"></canvas><button id="skip" type="button">Pular</button></div>
+<div class="promo">BLACKOUT DE OFERTAS · DESCONTOS DE ATÉ 60% OFF</div>
+<header>
+  <div class="wrap hd">
+    <a class="logo" href="#" aria-label="Kings Sneakers, início"><img src="img/logo.png" alt="Kings Sneakers"></a>
+    <nav class="cats" id="cats" aria-label="Categorias"></nav>
+    <label class="search" for="q">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Buscar" autocomplete="off">
+    </label>
+    <button class="cartbtn" type="button" id="openCart" aria-label="Abrir carrinho">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+      <span class="ct" id="cartCount"></span>
+    </button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-in">
+    <div>
+      <h1>BLACKOUT DE OFERTAS!</h1>
+      <div class="tag">A MAIOR BLACK FRIDAY DA HISTÓRIA DA MAIOR REDE DE STREETWEAR DO PAÍS.</div>
+      <p class="big">Até <b>60% OFF</b> em peças selecionadas</p>
+      <a class="cta" href="#ofertas">Ver ofertas
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+    <div class="hero-img"><img src="img/hero.webp" alt="Modelos com caixas de tênis" fetchpriority="high" decoding="async" width="557" height="836"></div>
+  </div>
+</section>
+
+<main class="wrap" id="ofertas">
+  <div class="bar">
+    <h2 id="title">Ofertas <small id="count"></small></h2>
+    <div class="bar-r">
+      <button class="btn-f" id="openF" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filtros</button>
+      <label for="sort" class="vh" style="position:absolute;left:-9999px">Ordenar</label>
+      <select id="sort">
+        <option value="off">Maior desconto</option>
+        <option value="asc">Menor preço</option>
+        <option value="desc">Maior preço</option>
+        <option value="new">Mais recentes</option>
+      </select>
+    </div>
+  </div>
+  <div class="layout">
+    <aside class="filters" id="filters" aria-label="Filtros">
+      <div class="drawer-h"><b>Filtros</b><button type="button" id="closeF" aria-label="Fechar filtros">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+      <div class="fgroup"><h3>Gênero</h3><div id="fGen"></div></div>
+      <div class="fgroup"><h3>Marca</h3><div id="fMarca"></div></div>
+      <div class="fgroup"><h3>Desconto</h3><div id="fOff"></div></div>
+      <button class="clear" type="button" id="clear">Limpar filtros</button>
+      <button class="apply" type="button" id="apply">Ver resultados</button>
+    </aside>
+    <div class="grid" id="grid"></div>
+  </div>
+</main>
+
+<footer><div class="wrap"><img src="img/logo.png" alt="Kings Sneakers" style="height:32px;width:auto"><a class="ig" href="https://www.instagram.com/kingsportovelho/" target="_blank" rel="noopener"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>Siga @kingsportovelho</a><span>Blackout de Ofertas · *Desconto válido em produtos selecionados. Imagem ilustrativa.</span></div></footer>
+
+<div class="shade" id="shade"></div>
+<aside id="cart" aria-label="Carrinho" aria-hidden="true">
+  <div class="ch"><b>Carrinho</b><button type="button" id="closeCart" aria-label="Fechar carrinho">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="ci-list" id="cartList"></div>
+  <div class="cf" id="cartFoot"></div>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+<dialog id="dlg" aria-labelledby="pdName"><div class="pd" id="pd"></div></dialog>
+
+<script>
+// Número de WhatsApp da loja (só dígitos, com DDI e DDD, ex.: 5565999999999). Vazio = botão "Consulte na loja".
+const WHATSAPP = "5569999576977";
+
+const $ = s => document.querySelector(s);
+const brl = v => v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const offOf = p => Math.round((1 - p.por / p.de) * 100);
+const CAT_ORDER = ['Tênis','Camisetas','Shorts','Calças','Jaquetas','Bonés']; let CATS = ['Todos'];
+const OFFS = [[30,'30% ou mais'],[50,'50% ou mais'],[60,'60% ou mais']];
+let ALL = [], st = {cat:'Todos', q:'', gen:new Set(), marca:new Set(), off:0, sort:'off'};
+
+function chk(name, value, label, n){
+  const id = name + '-' + value.replace(/\W+/g,'-');
+  return `<label for="${id}"><input type="checkbox" id="${id}" data-f="${name}" value="${value}">${label}<span class="n">${n}</span></label>`;
+}
+function buildFilters(){
+  const have=new Set(ALL.map(p=>p.categoria)); CATS=['Todos',...CAT_ORDER.filter(c=>have.has(c)),...[...have].filter(c=>!CAT_ORDER.includes(c))];
+  $('#cats').innerHTML = CATS.map(c => `<button class="cat" type="button" data-c="${c}" aria-pressed="${c===st.cat}">${c}</button>`).join('');
+  const count = k => ALL.reduce((m,p)=>(m[p[k]]=(m[p[k]]||0)+1,m),{});
+  const g = count('genero'), m = count('marca');
+  $('#fGen').innerHTML = Object.keys(g).sort().map(k=>chk('gen',k,k,g[k])).join('');
+  $('#fMarca').innerHTML = Object.keys(m).sort().map(k=>chk('marca',k,k,m[k])).join('');
+  $('#fOff').innerHTML = OFFS.map(([v,l])=>{const id='off-'+v;return `<label for="${id}"><input type="radio" name="off" id="${id}" data-f="off" value="${v}">${l}<span class="n">${ALL.filter(p=>offOf(p)>=v).length}</span></label>`}).join('');
+}
+function list(){
+  const q = st.q.trim().toLowerCase();
+  let r = ALL.filter(p =>
+    (st.cat==='Todos' || p.categoria===st.cat) &&
+    (!st.gen.size || st.gen.has(p.genero)) &&
+    (!st.marca.size || st.marca.has(p.marca)) &&
+    offOf(p) >= st.off &&
+    (!q || (p.nome+' '+p.marca+' '+p.ref+' '+p.descricao).toLowerCase().includes(q)));
+  const s = {off:(a,b)=>offOf(b)-offOf(a)||a.por-b.por, asc:(a,b)=>a.por-b.por, desc:(a,b)=>b.por-a.por, new:(a,b)=>b._i-a._i}[st.sort];
+  return r.sort(s);
+}
+function render(){
+  const r = list();
+  $('#title').firstChild.nodeValue = (st.cat==='Todos'?'Ofertas':st.cat) + ' ';
+  $('#count').textContent = `(${r.length})`;
+  $('#apply').textContent = `Ver ${r.length} resultado${r.length===1?'':'s'}`;
+  document.querySelectorAll('.cat').forEach(b=>b.setAttribute('aria-pressed', b.dataset.c===st.cat));
+  $('#grid').innerHTML = r.length ? r.map((p,k)=>`
+    <button class="card" type="button" data-id="${p.id}">
+      <div class="pic"><img src="${p.thumb||p.img}" alt="${p.nome}" ${k<4?'fetchpriority="high"':'loading="lazy"'} decoding="async" width="560" height="700"><span class="badge">-${offOf(p)}%</span></div>
+      <div class="br">${p.marca}</div>
+      <div class="nm">${p.nome}</div>
+      <div class="cat2">${p.categoria} · ${p.genero}</div>
+      <div class="price"><span class="por">R$ ${brl(p.por)}</span><span class="de">R$ ${brl(p.de)}</span></div>
+    </button>`).join('') : '<p class="empty">Nenhuma peça encontrada com esses filtros. Tente limpar os filtros.</p>';
+}
+function openP(id){
+  const p = ALL.find(x=>x.id===id); if(!p) return;
+  const msg = encodeURIComponent(`Olá! Tenho interesse na ${p.nome} (ref. ${p.ref}) por R$ ${brl(p.por)} no Blackout de Ofertas. Quais ${p.categoria==='Tênis'?'numerações':'tamanhos'} estão disponíveis?`);
+  const sizes = SIZES[p.categoria] || ['Único'];
+  let chosen = sizes.length===1 ? sizes[0] : null;
+  const wa = `<a class="buy sec" href="https://wa.me/${WHATSAPP}?text=${msg}" target="_blank" rel="noopener">${WA_ICON}Perguntar sobre essa peça</a>`;
+  const isShoe = p.categoria==='Tênis';
+  const buy = `<div class="lbl"><span>${isShoe?'Numeração desejada':'Tamanho desejado'}</span><span class="err" id="sizeErr"></span></div>
+    <p class="avail">${AV_ICON}<span><b>Consulte a disponibilidade.</b> ${isShoe?'As numerações':'Os tamanhos'} variam por peça e são confirmados pelo vendedor no WhatsApp antes da compra.</span></p>
+    <div class="sizes" id="sizes">${sizes.map(z=>`<button type="button" data-z="${z}" aria-pressed="${z===chosen}">${z}</button>`).join('')}</div>
+    <div class="acts"><button class="addcart" type="button" id="addCart">Adicionar ao carrinho</button>${wa}
+    <p class="note">WhatsApp da loja: (69) 99957-6977</p></div>`;
+  $('#pd').innerHTML = `
+    <div class="pic"><button class="x" type="button" id="closeP" aria-label="Fechar">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <img src="${p.img}" alt="${p.nome}"></div>
+    <div class="info">
+      <div class="br" style="color:var(--red);font:700 14px var(--display);text-transform:uppercase">${p.marca} · ${p.categoria}</div>
+      <h2 id="pdName">${p.nome}</h2>
+      <div class="ref">Ref. ${p.ref} · ${p.genero}</div>
+      <div class="pr"><span class="por">R$ ${brl(p.por)}</span><span class="off">${offOf(p)}% OFF</span></div>
+      <div class="pr" style="margin-top:0"><span class="de">De R$ ${brl(p.de)}</span></div>
+      <p class="d">${p.descricao}</p>
+      ${buy}
+    </div>`;
+  $('#closeP').onclick = closeP;
+  $('#sizes').onclick = e => { const b=e.target.closest('button'); if(!b) return; chosen=b.dataset.z;
+    document.querySelectorAll('#sizes button').forEach(x=>x.setAttribute('aria-pressed', x===b)); $('#sizeErr').textContent=''; };
+  $('#addCart').onclick = () => { if(!chosen){ $('#sizeErr').textContent=p.categoria==='Tênis'?'Escolha uma numeração':'Escolha um tamanho'; return; }
+    addToCart(p.id, chosen); closeP(); openCart(); toast('Adicionado ao carrinho'); };
+  const d = $('#dlg'); if(!d.open) d.showModal();
+  if(location.hash !== '#p-'+id) history.replaceState(null,'','#p-'+id);
+}
+const AV_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg>';
+const WA_ICON = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1.2-1.2-1.8-1-1 .7a4 4 0 0 1-2.4-2.4l.7-1-1-1.8z"/></svg>';
+const SIZES = {Camisetas:['P','M','G','GG','XG'], Shorts:['P','M','G','GG'], 'Calças':['P','M','G','GG'], Jaquetas:['P','M','G','GG'], 'Bonés':['Único'], 'Tênis':['34','35','36','37','38','39','40','41','42','43','44']};
+let CART = [];
+try { CART = JSON.parse(localStorage.getItem('kings-cart')||'[]'); } catch(e) { CART = []; }
+function saveCart(){ try { localStorage.setItem('kings-cart', JSON.stringify(CART)); } catch(e) {} }
+function addToCart(id, size){ const it = CART.find(x=>x.id===id && x.size===size); if(it) it.qty++; else CART.push({id,size,qty:1}); saveCart(); renderCart(); }
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('on'),1800); }
+function openCart(){ $('#cart').classList.add('open'); $('#cart').setAttribute('aria-hidden','false'); $('#shade').classList.add('on'); }
+function closeCart(){ $('#cart').classList.remove('open'); $('#cart').setAttribute('aria-hidden','true'); $('#shade').classList.remove('on'); }
+function renderCart(){
+  const items = CART.map(c=>({...c, p:ALL.find(p=>p.id===c.id)})).filter(c=>c.p);
+  const n = items.reduce((a,c)=>a+c.qty,0);
+  $('#cartCount').textContent = n || '';
+  if(!items.length){ $('#cartList').innerHTML = '<p class="cempty">Seu carrinho está vazio.<br>Escolha uma peça e toque em “Adicionar ao carrinho”.</p>'; $('#cartFoot').innerHTML=''; return; }
+  $('#cartList').innerHTML = items.map((c,i)=>`
+    <div class="ci"><img src="${c.p.thumb||c.p.img}" loading="lazy" alt="${c.p.nome}">
+      <div><div class="t">${c.p.nome}</div><div class="m">${c.p.categoria==='Tênis'?'Nº':'Tam.'} ${c.size} <span class="tbc">a confirmar</span> · Ref. ${c.p.ref}</div>
+        <div class="row"><div class="qty"><button type="button" data-a="dec" data-i="${i}" aria-label="Diminuir quantidade">−</button><span>${c.qty}</span><button type="button" data-a="inc" data-i="${i}" aria-label="Aumentar quantidade">+</button></div>
+        <div class="pp">R$ ${brl(c.p.por*c.qty)}</div></div>
+        <button class="rm" type="button" data-a="rm" data-i="${i}">Remover</button></div></div>`).join('');
+  const de = items.reduce((a,c)=>a+c.p.de*c.qty,0), por = items.reduce((a,c)=>a+c.p.por*c.qty,0);
+  const lines = items.map(c=>`• ${c.qty}x ${c.p.nome} (ref. ${c.p.ref}) – ${c.p.categoria==='Tênis'?'Nº':'Tam.'} ${c.size} – R$ ${brl(c.p.por*c.qty)}`).join('\n');
+  const msg = encodeURIComponent(`Olá! Quero fazer um pedido do Blackout de Ofertas:\n\n${lines}\n\nTotal: R$ ${brl(por)} (economia de R$ ${brl(de-por)})\n\nPode confirmar se esses tamanhos estão disponíveis?`);
+  $('#cartFoot').innerHTML = `
+    <div class="r"><span>${n} ${n===1?'peça':'peças'} · preço cheio</span><span>R$ ${brl(de)}</span></div>
+    <div class="r save"><span>Você economiza</span><span>− R$ ${brl(de-por)}</span></div>
+    <div class="r tot"><span>Total</span><span>R$ ${brl(por)}</span></div>
+    <a class="buy" href="https://wa.me/${WHATSAPP}?text=${msg}" target="_blank" rel="noopener">${WA_ICON}Finalizar pedido no WhatsApp</a>
+    <p class="avail">${AV_ICON}<span><b>Tamanhos sujeitos à disponibilidade.</b> O vendedor confirma tamanhos, estoque, pagamento e entrega pelo WhatsApp.</span></p>`;
+}
+$('#cartList').addEventListener('click',e=>{ const b=e.target.closest('button[data-a]'); if(!b) return;
+  const i=+b.dataset.i, items=CART.filter(c=>ALL.some(p=>p.id===c.id)), c=items[i]; if(!c) return;
+  if(b.dataset.a==='inc') c.qty++; else if(b.dataset.a==='dec') c.qty>1 ? c.qty-- : CART.splice(CART.indexOf(c),1); else CART.splice(CART.indexOf(c),1);
+  saveCart(); renderCart(); });
+$('#openCart').onclick=openCart; $('#closeCart').onclick=closeCart; $('#shade').onclick=closeCart;
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && $('#cart').classList.contains('open')) closeCart(); });
+
+function closeP(){ const d=$('#dlg'); if(d.open) d.close(); }
+$('#dlg').addEventListener('close',()=>{ if(location.hash.startsWith('#p-')) history.replaceState(null,'',location.pathname+location.search); });
+$('#dlg').addEventListener('click',e=>{ if(e.target.id==='dlg') closeP(); });
+
+$('#cats').addEventListener('click',e=>{const b=e.target.closest('.cat'); if(b){st.cat=b.dataset.c; render();}});
+let qt; $('#q').addEventListener('input',e=>{clearTimeout(qt); qt=setTimeout(()=>{st.q=e.target.value; render();},150);});
+$('#sort').addEventListener('change',e=>{st.sort=e.target.value; render();});
+$('#filters').addEventListener('change',e=>{
+  const i=e.target, f=i.dataset.f; if(!f) return;
+  if(f==='off') st.off=+i.value; else (i.checked?st[f].add(i.value):st[f].delete(i.value));
+  render();
+});
+$('#clear').onclick=()=>{st.gen.clear();st.marca.clear();st.off=0;document.querySelectorAll('#filters input').forEach(i=>i.checked=false);render();};
+$('#grid').addEventListener('click',e=>{const c=e.target.closest('.card'); if(c) openP(c.dataset.id);});
+$('#openF').onclick=()=>$('#filters').classList.add('open');
+$('#closeF').onclick=$('#apply').onclick=()=>$('#filters').classList.remove('open');
+function fromHash(){ const h=location.hash; if(h.startsWith('#p-')) openP(h.slice(3)); else if(h==='#ofertas'){} else closeP(); }
+window.addEventListener('hashchange',fromHash);
+
+fetch('products.json').then(r=>r.json()).then(d=>{
+  ALL = d.map((p,i)=>({...p,_i:i}));
+  buildFilters(); render(); renderCart(); fromHash();
+}).catch(()=>{ $('#grid').innerHTML='<p class="empty">Não foi possível carregar as peças. Recarregue a página.</p>'; });
+</script>
+<script>
+(function(){
+  const intro=document.getElementById('intro'), cv=document.getElementById('fx'), ctx=cv.getContext('2d'), skip=document.getElementById('skip');
+  let done=false, raf;
+  function end(){ if(done) return; done=true; cancelAnimationFrame(raf); intro.classList.add('out'); document.body.classList.remove('lock'); setTimeout(()=>intro.remove(),500); }
+  skip.onclick=end; intro.addEventListener('click',e=>{ if(e.target!==skip) end(); });
+  setTimeout(end,5000); // segurança: nunca prende o cliente
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const img=new Image(); img.onload=start; img.onerror=end; img.src='img/logo.png';
+
+  function start(){
+    if(done) return;
+    const dpr=Math.min(devicePixelRatio||1,2), W=innerWidth, H=innerHeight;
+    cv.width=W*dpr; cv.height=H*dpr; ctx.scale(dpr,dpr);
+    const lw=Math.min(W*0.62,420), lh=lw*img.naturalHeight/img.naturalWidth;
+    const off=document.createElement('canvas'); off.width=Math.ceil(lw); off.height=Math.ceil(lh);
+    const o=off.getContext('2d'); o.drawImage(img,0,0,lw,lh);
+    const A=o.getImageData(0,0,off.width,off.height).data, OW=off.width, OH=off.height;
+    const solid=(x,y)=>{x|=0;y|=0; return x>=0&&y>=0&&x<OW&&y<OH&&A[(y*OW+x)*4+3]>60;};
+    const layer=document.createElement('canvas'); layer.width=OW; layer.height=OH; const L=layer.getContext('2d');
+    const ox=(W-OW)/2, oy=(H-OH)/2 - 10, barW=Math.min(160,lw*0.45), barY=oy+OH+34;
+    const P=[], T0=performance.now();
+    const tLoad=750, tBurn=reduce?0:950, tOut=500;
+    const front=(x,p)=> OH*(1-p) + Math.sin(x*0.05+p*14)*5 + Math.sin(x*0.14-p*9)*3;
+    function frame(now){
+      const t=now-T0; ctx.clearRect(0,0,W,H);
+      // 1) loading: logo surge + barra fina enchendo
+      const a=Math.min(1,t/250);
+      const lp=Math.min(1,t/tLoad), ease=1-Math.pow(1-lp,3);
+      const barA = t<tLoad ? a : Math.max(0,1-(t-tLoad)/200);
+      if(barA>0){ ctx.fillStyle=`rgba(255,255,255,${0.14*barA})`; ctx.fillRect((W-barW)/2,barY,barW,2);
+        ctx.fillStyle=`rgba(255,255,255,${0.9*barA})`; ctx.fillRect((W-barW)/2,barY,barW*ease,2); }
+      // 2) a logo pega fogo de baixo para cima
+      const bp = t<tLoad ? 0 : Math.min(1.12,(t-tLoad)/Math.max(tBurn,1)*1.12);
+      L.clearRect(0,0,OW,OH); L.globalCompositeOperation='source-over'; L.drawImage(off,0,0);
+      if(bp>0 && !reduce){
+        L.globalCompositeOperation='destination-out'; L.beginPath(); L.moveTo(0,OH);
+        for(let x=0;x<=OW;x+=5) L.lineTo(x,front(x,bp)); L.lineTo(OW,front(OW,bp)); L.lineTo(OW,OH); L.closePath(); L.fill();
+        L.globalCompositeOperation='source-atop';
+        for(let x=0;x<=OW;x+=5){ const fy=front(x,bp); const g=L.createLinearGradient(0,fy-26,0,fy); g.addColorStop(0,'rgba(255,90,0,0)'); g.addColorStop(.6,'rgba(255,120,0,.9)'); g.addColorStop(1,'rgba(255,235,140,1)'); L.fillStyle=g; L.fillRect(x,fy-26,5,28); }
+        if(bp<1.06) for(let k=0;k<12;k++){ const x=Math.random()*OW, fy=front(x,bp); if(solid(x,fy-2)||solid(x,fy+3)) P.push({x:ox+x,y:oy+fy,vx:(Math.random()-.5)*1,vy:-(1.2+Math.random()*2.4),l:0,m:30+Math.random()*30,s:4+Math.random()*9}); }
+      }
+      const fade = reduce ? (t>tLoad ? Math.max(0,1-(t-tLoad)/tOut) : 1) : 1;
+      ctx.globalAlpha=a*fade; ctx.drawImage(layer,ox,oy); ctx.globalAlpha=1;
+      for(let i=P.length-1;i>=0;i--){ const q=P[i]; q.l++; q.x+=q.vx+Math.sin((q.y+q.l)*0.05)*0.5; q.y+=q.vy; q.vy*=0.985; q.s*=1.012;
+        const r=q.l/q.m; if(r>=1){P.splice(i,1);continue;}
+        if(r<0.5){ ctx.globalCompositeOperation='lighter'; const c=r<0.15?'255,230,140':r<0.32?'255,140,20':'232,40,20';
+          const g=ctx.createRadialGradient(q.x,q.y,0,q.x,q.y,q.s); g.addColorStop(0,`rgba(${c},${0.6*(1-r)})`); g.addColorStop(1,`rgba(${c},0)`); ctx.fillStyle=g; }
+        else { ctx.globalCompositeOperation='source-over'; ctx.fillStyle=`rgba(110,110,110,${0.14*(1-r)})`; }
+        ctx.beginPath(); ctx.arc(q.x,q.y,q.s*(r<0.5?1:1.5),0,7); ctx.fill(); }
+      ctx.globalCompositeOperation='source-over';
+      // 3) entra no site enquanto a fumaça some
+      if(t>tLoad+tBurn+(reduce?tOut:120)) return end();
+      raf=requestAnimationFrame(frame);
+    }
+    raf=requestAnimationFrame(frame);
+  }
+})();
+</script>
+</body>
+</html>
