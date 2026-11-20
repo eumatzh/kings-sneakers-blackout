@@ -453,5 +453,70 @@
 "por": 454.99,
 "img": "img/hq1940.jpg",
 "thumb": "img/t/hq1940.webp"
+},
+{
+"id": "if1764",
+"ref": "IF1764-100",
+"marca": "Nike",
+"categoria": "Tênis",
+"genero": "Unissex",
+"nome": "Tênis Nike Cortez Textile Off-white",
+"descricao": "Off-white com Swoosh pêssego e faixa azul-claro na entressola. O clássico Cortez em tecido.",
+"de": 649.99,
+"por": 454.99,
+"img": "img/if1764.jpg",
+"thumb": "img/t/if1764.webp"
+},
+{
+"id": "dz2795",
+"ref": "DZ2795-602",
+"marca": "Nike",
+"categoria": "Tênis",
+"genero": "Feminino",
+"nome": "Tênis Nike Cortez Textile Rosa",
+"descricao": "Rosa com Swoosh azul-marinho e faixa azul royal na entressola.",
+"de": 649.99,
+"por": 454.99,
+"img": "img/dz2795.jpg",
+"thumb": "img/t/dz2795.webp"
+},
+{
+"id": "400986-02",
+"ref": "400986-02",
+"marca": "Puma",
+"categoria": "Tênis",
+"genero": "Feminino",
+"nome": "Tênis Puma Speedcat OG Vermelho",
+"descricao": "Camurça vermelha com a faixa Puma branca e solado preto. Ícone do automobilismo.",
+"de": 699.99,
+"por": 489.99,
+"img": "img/400986-02.jpg",
+"thumb": "img/t/400986-02.webp"
+},
+{
+"id": "dn1791",
+"ref": "DN1791-108",
+"marca": "Nike",
+"categoria": "Tênis",
+"genero": "Unissex",
+"nome": "Tênis Nike Cortez Leather Branco/Vermelho",
+"descricao": "Couro branco com Swoosh vermelho e faixa azul na entressola. A cor original do Cortez.",
+"de": 699.99,
+"por": 489.99,
+"img": "img/dn1791.jpg",
+"thumb": "img/t/dn1791.webp"
+},
+{
+"id": "dn4044",
+"ref": "DN4044-113",
+"marca": "Nike",
+"categoria": "Tênis",
+"genero": "Masculino",
+"nome": "Tênis Nike Cortez Branco/Verde",
+"descricao": "Couro branco com Swoosh verde, faixa azul-marinho e solado gum.",
+"de": 699.99,
+"por": 489.99,
+"img": "img/dn4044.jpg",
+"thumb": "img/t/dn4044.webp"
 }
 ]
