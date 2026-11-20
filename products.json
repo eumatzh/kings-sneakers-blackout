@@ -434,11 +434,24 @@
 "marca": "Nike",
 "categoria": "Tênis",
 "genero": "Unissex",
-"nome": "Tênis Nike Terra Manta",
+"nome": "Tênis Nike Terra Manta Branco",
 "descricao": "Branco com Swoosh azul royal e solado caramelo (gum). Visual retrô de futsal.",
 "de": 649.99,
 "por": 454.0,
 "img": "img/hq4502.jpg",
 "thumb": "img/t/hq4502.webp"
+},
+{
+"id": "hq1940",
+"ref": "HQ1940-200",
+"marca": "Nike",
+"categoria": "Tênis",
+"genero": "Unissex",
+"nome": "Tênis Nike Terra Manta Caramelo",
+"descricao": "Caramelo com Swoosh branco e solado gum. Visual retrô de futsal.",
+"de": 649.99,
+"por": 454.0,
+"img": "img/hq1940.jpg",
+"thumb": "img/t/hq1940.webp"
 }
 ]
