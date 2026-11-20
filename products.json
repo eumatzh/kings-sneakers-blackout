@@ -427,5 +427,18 @@
 "por": 139.99,
 "img": "img/dc3673.jpg",
 "thumb": "img/t/dc3673.webp"
+},
+{
+"id": "hq4502",
+"ref": "HQ4502-102",
+"marca": "Nike",
+"categoria": "Tênis",
+"genero": "Unissex",
+"nome": "Tênis Nike Terra Manta",
+"descricao": "Branco com Swoosh azul royal e solado caramelo (gum). Visual retrô de futsal.",
+"de": 649.99,
+"por": 454.0,
+"img": "img/hq4502.jpg",
+"thumb": "img/t/hq4502.webp"
 }
 ]
